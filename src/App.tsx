@@ -12,6 +12,10 @@ import SmartlinkPage from './pages/SmartlinkPage';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Payment from './pages/Payment';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentCancel from './pages/PaymentCancel';
+import AdminDashboard from './pages/AdminDashboard';
 import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient({
@@ -60,6 +64,38 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <EditSmartlink />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/payment" 
+                element={
+                  <ProtectedRoute>
+                    <Payment />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/payment/success" 
+                element={
+                  <ProtectedRoute>
+                    <PaymentSuccess />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/payment/cancel" 
+                element={
+                  <ProtectedRoute>
+                    <PaymentCancel />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
                   </ProtectedRoute>
                 } 
               />

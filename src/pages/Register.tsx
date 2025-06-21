@@ -85,8 +85,14 @@ const Register: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      await register(formData);
-      navigate('/', { replace: true });
+      const result = await register(formData);
+      
+      // Rediriger vers le paiement si nécessaire, sinon vers l'accueil
+      if (result && result.requiresPayment) {
+        navigate('/payment', { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
     } catch (error) {
       // Les erreurs sont gérées dans le contexte d'auth
     }

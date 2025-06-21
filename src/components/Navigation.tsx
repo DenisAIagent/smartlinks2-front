@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
-import { Music, Plus, Settings, LogOut, User } from 'lucide-react';
+import { Music, Plus, Settings, LogOut, User, Crown } from 'lucide-react';
 
 const Navigation: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -52,6 +52,14 @@ const Navigation: React.FC = () => {
                 Créer un lien
               </Button>
             </Link>
+            {user?.is_superadmin && (
+              <Link to="/admin">
+                <Button variant="ghost" className="text-yellow-600 hover:text-yellow-700">
+                  <Crown className="h-4 w-4 mr-2" />
+                  Administration
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Menu utilisateur */}
@@ -96,6 +104,14 @@ const Navigation: React.FC = () => {
                     <span>Créer un lien</span>
                   </Link>
                 </DropdownMenuItem>
+                {user?.is_superadmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin" className="cursor-pointer text-yellow-600 focus:text-yellow-600">
+                      <Crown className="mr-2 h-4 w-4" />
+                      <span>Administration</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem disabled>
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Paramètres</span>

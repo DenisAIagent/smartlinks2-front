@@ -4,6 +4,9 @@ export interface User {
   email: string;
   created_at: string;
   is_active: boolean;
+  is_superadmin: boolean;
+  subscription_status: 'pending' | 'active' | 'expired' | 'cancelled';
+  subscription_end_date: string | null;
 }
 
 export interface AuthResponse {
@@ -11,6 +14,7 @@ export interface AuthResponse {
   user: User;
   access_token: string;
   refresh_token: string;
+  requires_payment?: boolean;
 }
 
 export interface LoginCredentials {
@@ -30,8 +34,8 @@ export interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: LoginCredentials) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
+  login: (credentials: LoginCredentials) => Promise<{ requiresPayment: boolean; user: User } | undefined>;
+  register: (data: RegisterData) => Promise<{ requiresPayment: boolean; user: User } | undefined>;
   logout: () => void;
   refreshToken: () => Promise<void>;
 }

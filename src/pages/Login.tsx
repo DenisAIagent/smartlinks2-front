@@ -52,8 +52,14 @@ const Login: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      await login(credentials);
-      navigate(from, { replace: true });
+      const result = await login(credentials);
+      
+      // Rediriger vers le paiement si nécessaire, sinon vers la destination prévue
+      if (result && result.requiresPayment) {
+        navigate('/payment', { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       // Les erreurs sont gérées dans le contexte d'auth
     }
@@ -67,8 +73,14 @@ const Login: React.FC = () => {
     };
 
     try {
-      await login(demoCredentials);
-      navigate(from, { replace: true });
+      const result = await login(demoCredentials);
+      
+      // Rediriger vers le paiement si nécessaire, sinon vers la destination prévue
+      if (result && result.requiresPayment) {
+        navigate('/payment', { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     } catch (error) {
       // Fallback si le compte de démo n'existe pas
       console.log('Compte de démo non disponible');

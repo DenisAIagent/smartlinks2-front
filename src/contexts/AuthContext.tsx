@@ -49,6 +49,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       saveTokens(response.access_token, response.refresh_token);
       
       toast.success('Connexion réussie!');
+      
+      // Retourner les informations de redirection pour le paiement
+      return {
+        requiresPayment: response.requires_payment && !response.user.is_superadmin,
+        user: response.user
+      };
     } catch (error) {
       if (error instanceof ApiException) {
         toast.error(error.data.error);
@@ -82,6 +88,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       saveTokens(response.access_token, response.refresh_token);
       
       toast.success('Compte créé avec succès!');
+      
+      // Retourner les informations de redirection pour le paiement
+      return {
+        requiresPayment: response.requires_payment && !response.user.is_superadmin,
+        user: response.user
+      };
     } catch (error) {
       if (error instanceof ApiException) {
         toast.error(error.data.error);
