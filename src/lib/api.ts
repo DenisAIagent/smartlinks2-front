@@ -1,7 +1,7 @@
 import { LoginCredentials, RegisterData, AuthResponse, ApiError } from '@/types/auth';
 
 // Configuration de l'API
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://smartlinks-backend-production.up.railway.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://smartlink2-backend-production.up.railway.app/api';
 
 // Classe pour gérer les erreurs d'API
 export class ApiException extends Error {
