@@ -1,4 +1,4 @@
-import { LoginCredentials, RegisterData, AuthResponse, ApiError } from '@/types/auth';
+import { LoginCredentials, RegisterData, AuthResponse, ApiError, ForgotPasswordData, ResetPasswordData, ForgotPasswordResponse, ResetPasswordResponse } from '@/types/auth';
 
 // Configuration de l'API
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://smartlink2-backend-production.up.railway.app/api';
@@ -78,6 +78,21 @@ export const authApi = {
     return apiRequest<AuthResponse>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(registerData),
+    }, false);
+  },
+
+  forgotPassword: async (data: ForgotPasswordData): Promise<ForgotPasswordResponse> => {
+    return apiRequest<ForgotPasswordResponse>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }, false);
+  },
+
+  resetPassword: async (data: ResetPasswordData): Promise<ResetPasswordResponse> => {
+    const { confirmPassword, ...resetData } = data;
+    return apiRequest<ResetPasswordResponse>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify(resetData),
     }, false);
   },
 

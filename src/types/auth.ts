@@ -29,6 +29,24 @@ export interface RegisterData {
   confirmPassword: string;
 }
 
+export interface ForgotPasswordData {
+  email: string;
+}
+
+export interface ResetPasswordData {
+  token: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface ForgotPasswordResponse {
+  message: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+}
+
 export interface AuthContextType {
   user: User | null;
   token: string | null;
@@ -36,6 +54,8 @@ export interface AuthContextType {
   isLoading: boolean;
   login: (credentials: LoginCredentials) => Promise<{ requiresPayment: boolean; user: User } | undefined>;
   register: (data: RegisterData) => Promise<{ requiresPayment: boolean; user: User } | undefined>;
+  forgotPassword: (data: ForgotPasswordData) => Promise<void>;
+  resetPassword: (data: ResetPasswordData) => Promise<void>;
   logout: () => void;
   refreshToken: () => Promise<void>;
 }

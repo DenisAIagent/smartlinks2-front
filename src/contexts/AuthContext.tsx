@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, AuthContextType, LoginCredentials, RegisterData } from '@/types/auth';
+import { User, AuthContextType, LoginCredentials, RegisterData, ForgotPasswordData, ResetPasswordData } from '@/types/auth';
 import { authApi, ApiException } from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -109,6 +109,56 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  // Fonction de récupération de mot de passe
+  const forgotPassword = async (data: ForgotPasswordData) => {
+    try {
+      setIsLoading(true);
+      await authApi.forgotPassword(data);
+      toast.success('Un email de récupération a été envoyé à votre adresse email');
+    } catch (error) {
+      if (error instanceof ApiException) {
+        toast.error(error.data.error);
+      } else {
+        toast.error('Erreur lors de l\'envoi de l\'email de récupération');
+      }
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fonction de réinitialisation de mot de passe
+  const resetPassword = async (data: ResetPasswordData) => {
+    try {
+      // Validation côté client
+      if (data.password !== data.confirmPassword) {
+        toast.error('Les mots de passe ne correspondent pas');
+        throw new Error('Les mots de passe ne correspondent pas');
+      }
+
+      if (data.password.length < 8) {
+        toast.error('Le mot de passe doit contenir au moins 8 caractères');
+        throw new Error('Le mot de passe doit contenir au moins 8 caractères');
+      }
+
+      setIsLoading(true);
+      await authApi.resetPassword(data);
+      toast.success('Mot de passe réinitialisé avec succès!');
+    } catch (error) {
+      if (error instanceof ApiException) {
+        toast.error(error.data.error);
+      } else if (error instanceof Error) {
+        // Erreurs de validation côté client
+        throw error;
+      } else {
+        toast.error('Erreur lors de la réinitialisation du mot de passe');
+      }
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Fonction de déconnexion
   const logout = () => {
     clearTokens();
@@ -189,6 +239,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isLoading,
     login,
     register,
+    forgotPassword,
+    resetPassword,
     logout,
     refreshToken,
   };
