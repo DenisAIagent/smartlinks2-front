@@ -9,15 +9,15 @@ WORKDIR /app
 # Copy package files for better layer caching
 COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies
-RUN --mount=type=cache,id=s/5491865c-914a-42b6-88c7-085afda2b626-/root/local/share/pnpm/store/v3,target=/root/.local/share/pnpm/store/v3 \
+# Install dependencies - FIX CACHE IDS
+RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store/v3 \
     pnpm i --frozen-lockfile
 
 # Copy source code (excluding node_modules via .dockerignore)
 COPY . .
 
-# Build the application
-RUN --mount=type=cache,id=s/5491865c-914a-42b6-88c7-085afda2b626-node_modules/cache,target=/app/node_modules/.cache \
+# Build the application - FIX CACHE IDS
+RUN --mount=type=cache,id=node-modules-cache,target=/app/node_modules/.cache \
     pnpm run build
 
 # Production stage - VERSION RAILWAY COMPATIBLE
