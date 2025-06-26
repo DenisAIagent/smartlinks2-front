@@ -1,50 +1,30 @@
 FROM node:18-alpine as builder
 
-# Install pnpm globally
-RUN npm install -g pnpm@8.10.0
-
-# Create app directory
 WORKDIR /app
 
-# Copy package files for better layer caching
+# Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install dependencies - FIX CACHE IDS
-RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store/v3 \
-    pnpm i --frozen-lockfile
+# Install pnpm and dependencies
+RUN npm install -g pnpm
+RUN pnpm install
 
-# Copy source code (excluding node_modules via .dockerignore)
+# Copy source and build
 COPY . .
+RUN pnpm run build
 
-# Build the application - FIX CACHE IDS
-RUN --mount=type=cache,id=node-modules-cache,target=/app/node_modules/.cache \
-    pnpm run build
+# Production nginx
+FROM nginx:alpine
 
-# Production stage - VERSION RAILWAY COMPATIBLE
-FROM nginx:1.25-alpine
-
-# Remove default nginx config
+# Remove default config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy our nginx configuration
+# Copy our config and built files
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Copy built files from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Create nginx directories with proper permissions for Railway
-RUN mkdir -p /var/cache/nginx/client_temp && \
-    mkdir -p /var/cache/nginx/proxy_temp && \
-    mkdir -p /var/cache/nginx/fastcgi_temp && \
-    mkdir -p /var/cache/nginx/uwsgi_temp && \
-    mkdir -p /var/cache/nginx/scgi_temp && \
-    mkdir -p /tmp/nginx && \
-    chmod -R 777 /var/cache/nginx && \
-    chmod -R 777 /tmp/nginx && \
-    chmod -R 755 /usr/share/nginx/html
+# Simple permissions
+RUN chmod -R 755 /usr/share/nginx/html
 
-# Expose port
 EXPOSE 80
-
-# Start nginx as root (Railway requirement)
 CMD ["nginx", "-g", "daemon off;"]
